@@ -8,6 +8,7 @@ from mediaexplorer.paths import CONFIG_DIR
 from mediaexplorer.ytdlp import (
     DownloadError,
     YoutubeDL,
+    is_playlist_info,
     missing_ytdlp_message,
     playlist_options,
     ytdlp_available,
@@ -98,6 +99,10 @@ def main() -> int:
     if not isinstance(info, dict):
         print("Error: playlist lookup returned no usable result.", file=sys.stderr)
         return 1
+
+    if not is_playlist_info(info):
+        print("This URL does not appear to be a playlist.")
+        return 0
 
     if not display_playlist(info):
         return 1

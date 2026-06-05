@@ -9,6 +9,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 DOCS_DIR = PROJECT_ROOT / "docs"
 CONFIG_DIR = PROJECT_ROOT / "config"
+CONFIG_YTDLP_FILE = CONFIG_DIR / "yt-dlp.conf"
 DOWNLOADS_DIR = PROJECT_ROOT / "downloads"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 TOOLS_DIR = PROJECT_ROOT / "tools"

@@ -54,8 +54,16 @@ uv run python scripts/formats.py URL
 
 ## Video Download
 
+Default mode downloads the best available quality (may use codecs such as AV1 that QuickTime Player does not support).
+
 ```bash
 uv run python scripts/download.py URL
+```
+
+For QuickTime-friendly H.264/AAC MP4 when available:
+
+```bash
+uv run python scripts/download.py URL --compatible
 ```
 
 ## Audio Extraction

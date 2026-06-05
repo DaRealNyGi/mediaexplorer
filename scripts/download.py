@@ -32,6 +32,11 @@ def parse_args() -> argparse.Namespace:
         description="Download media at the highest available quality.",
     )
     parser.add_argument("url", help="Media URL to download")
+    parser.add_argument(
+        "--compatible",
+        action="store_true",
+        help="Prefer H.264/AAC MP4 formats for QuickTime Player compatibility.",
+    )
     return parser.parse_args()
 
 
@@ -91,7 +96,7 @@ def main() -> int:
 
     print(f"Using FFmpeg: {FFMPEG_EXE}")
 
-    options = video_download_options(progress_hook)
+    options = video_download_options(progress_hook, compatible=args.compatible)
 
     try:
         with YoutubeDL(options) as ydl:
