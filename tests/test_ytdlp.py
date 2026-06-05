@@ -17,13 +17,9 @@ def test_bundled_ffmpeg_options_omitted_when_not_bundled(tmp_path: Path) -> None
 def test_bundled_ffmpeg_options_set_when_bundled(tmp_path: Path) -> None:
     bundled = tmp_path / "ffmpeg"
     bundled.write_text("", encoding="utf-8")
-    bin_dir = tmp_path / "bin"
 
-    with (
-        patch.object(ytdlp, "BUNDLED_FFMPEG_EXE", bundled),
-        patch.object(ytdlp, "FFMPEG_BIN_DIR", bin_dir),
-    ):
-        assert ytdlp.bundled_ffmpeg_options() == {"ffmpeg_location": str(bin_dir)}
+    with patch.object(ytdlp, "BUNDLED_FFMPEG_EXE", bundled):
+        assert ytdlp.bundled_ffmpeg_options() == {"ffmpeg_location": str(bundled)}
 
 
 def test_readonly_options_skip_ffmpeg_location_without_bundle(tmp_path: Path) -> None:
@@ -200,15 +196,11 @@ def test_video_download_options_compatible_format() -> None:
 def test_video_download_options_compatible_uses_ffmpeg_resolution(tmp_path: Path) -> None:
     bundled = tmp_path / "ffmpeg"
     bundled.write_text("", encoding="utf-8")
-    bin_dir = tmp_path / "bin"
 
     def hook(_status: dict) -> None:
         return None
 
-    with (
-        patch.object(ytdlp, "BUNDLED_FFMPEG_EXE", bundled),
-        patch.object(ytdlp, "FFMPEG_BIN_DIR", bin_dir),
-    ):
+    with patch.object(ytdlp, "BUNDLED_FFMPEG_EXE", bundled):
         options = ytdlp.video_download_options(hook, compatible=True)
 
-    assert options["ffmpeg_location"] == str(bin_dir)
+    assert options["ffmpeg_location"] == str(bundled)

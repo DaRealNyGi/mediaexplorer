@@ -1,17 +1,9 @@
 from __future__ import annotations
 
-import importlib
-import sys
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-
 import mediaexplorer.paths as paths
-
-
-def reload_paths() -> None:
-    importlib.reload(paths)
 
 
 class TestResolveExecutable:
@@ -43,35 +35,38 @@ class TestResolveExecutable:
         assert not resolved.exists()
 
 
-class TestPlatformExecutableNames:
-    @pytest.mark.parametrize(
-        ("platform", "ffmpeg_name", "ffprobe_name"),
-        [
-            ("win32", "ffmpeg.exe", "ffprobe.exe"),
-            ("darwin", "ffmpeg", "ffprobe"),
-            ("linux", "ffmpeg", "ffprobe"),
-        ],
-    )
-    def test_executable_names_match_platform(
-        self,
-        platform: str,
-        ffmpeg_name: str,
-        ffprobe_name: str,
-    ) -> None:
-        with (
-            patch.object(paths.sys, "platform", platform),
-            patch.object(paths.shutil, "which", return_value=None),
-        ):
-            reload_paths()
+class TestBundledExecutableCandidates:
+    def test_candidate_order_prefers_verified_exe_paths(self) -> None:
+        assert [path.name for path in paths.FFMPEG_CANDIDATES] == ["ffmpeg.exe", "ffmpeg"]
+        assert [path.name for path in paths.FFPROBE_CANDIDATES] == ["ffprobe.exe", "ffprobe"]
 
-        assert paths.FFMPEG_NAME == ffmpeg_name
-        assert paths.FFPROBE_NAME == ffprobe_name
-        assert paths.BUNDLED_FFMPEG_EXE.name == ffmpeg_name
-        assert paths.BUNDLED_FFPROBE_EXE.name == ffprobe_name
+    def test_prefers_exe_candidate_when_present(self, tmp_path: Path) -> None:
+        exe = tmp_path / "ffmpeg.exe"
+        extensionless = tmp_path / "ffmpeg"
+        exe.write_text("", encoding="utf-8")
+        extensionless.write_text("", encoding="utf-8")
 
-    def teardown_method(self) -> None:
-        with patch.object(paths.shutil, "which", return_value=None):
-            reload_paths()
+        resolved = paths.first_existing_path((exe, extensionless), exe)
+
+        assert resolved == exe
+
+    def test_supports_extensionless_candidate_when_exe_missing(self, tmp_path: Path) -> None:
+        exe = tmp_path / "ffmpeg.exe"
+        extensionless = tmp_path / "ffmpeg"
+        extensionless.write_text("", encoding="utf-8")
+
+        resolved = paths.first_existing_path((exe, extensionless), exe)
+
+        assert resolved == extensionless
+
+    def test_falls_back_to_exe_candidate_when_bundled_missing(self, tmp_path: Path) -> None:
+        exe = tmp_path / "ffmpeg.exe"
+        extensionless = tmp_path / "ffmpeg"
+
+        resolved = paths.first_existing_path((exe, extensionless), exe)
+
+        assert resolved == exe
+        assert not resolved.exists()
 
 
 class TestHealthCheckFfmpegAvailability:

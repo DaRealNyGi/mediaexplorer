@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from mediaexplorer import paths as media_paths
-from mediaexplorer.paths import BUNDLED_FFMPEG_EXE, DOWNLOADS_DIR, FFMPEG_BIN_DIR
+from mediaexplorer.paths import BUNDLED_FFMPEG_EXE, DOWNLOADS_DIR
 
 try:
     from yt_dlp import YoutubeDL
@@ -26,7 +26,7 @@ def missing_ytdlp_message() -> str:
 
 def bundled_ffmpeg_options() -> dict[str, Any]:
     if BUNDLED_FFMPEG_EXE.exists():
-        return {"ffmpeg_location": str(FFMPEG_BIN_DIR)}
+        return {"ffmpeg_location": str(BUNDLED_FFMPEG_EXE)}
     return {}
 
 
