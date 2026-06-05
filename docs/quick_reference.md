@@ -28,8 +28,16 @@ uv run python scripts/formats.py "URL"
 
 ## Download Video
 
+Default mode downloads the best available quality (may use codecs such as AV1 that QuickTime Player does not support).
+
 ```bash
 uv run python scripts/download.py "URL"
+```
+
+QuickTime-compatible mode prefers H.264 video and AAC audio in an MP4 container when available:
+
+```bash
+uv run python scripts/download.py "URL" --compatible
 ```
 
 Output:
@@ -116,7 +124,23 @@ tools/ffmpeg/bin/ffmpeg
 tools/ffmpeg/bin/ffprobe
 ```
 
-**yt-dlp:** `config/yt-dlp.conf` no longer sets `--ffmpeg-location`. Python option builders pass `ffmpeg_location` only when bundled FFmpeg exists; otherwise yt-dlp uses system `PATH`.
+**yt-dlp:** `config/yt-dlp.conf` is explicitly loaded by `src/mediaexplorer/ytdlp.py` when building Python `YoutubeDL` options (supported flags: `--remote-components`, `-o` / `--output`). It no longer sets `--ffmpeg-location`. Python option builders pass `ffmpeg_location` only when bundled FFmpeg exists; otherwise yt-dlp uses system `PATH`.
+
+## YouTube JavaScript Runtime (optional)
+
+yt-dlp may warn that no supported JavaScript runtime is installed. On macOS, install Deno:
+
+```bash
+brew install deno
+```
+
+Then rerun validation:
+
+```bash
+uv run python scripts/test.py
+```
+
+Deno is optional for basic usage but improves YouTube extraction reliability. The health check does not require it.
 
 ## Inspect Media File
 
