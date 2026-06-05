@@ -35,6 +35,11 @@ uv run python scripts/test.py
 See:
 `docs/quick_reference.md`
 
+## Roadmap
+
+See:
+`docs/roadmap_v0.3.md`
+
 ## Metadata
 
 ```bash
