@@ -13,7 +13,6 @@ from mediaexplorer.paths import (
     DOCS_DIR,
     DOWNLOAD_SCRIPT,
     DOWNLOADS_DIR,
-    FFMPEG_DIR,
     FFMPEG_EXE,
     FFPROBE_EXE,
     FORMATS_SCRIPT,
@@ -21,16 +20,18 @@ from mediaexplorer.paths import (
     PLAYLIST_SCRIPT,
     PROJECT_ROOT,
 )
-from mediaexplorer.validation import check_components, print_component_summary, status
+from mediaexplorer.validation import (
+    check_components,
+    check_executables,
+    print_component_summary,
+    status,
+)
 
 
 REQUIRED_COMPONENTS = {
     "docs folder": DOCS_DIR,
     "config folder": CONFIG_DIR,
     "downloads folder": DOWNLOADS_DIR,
-    "tools/ffmpeg": FFMPEG_DIR,
-    "ffmpeg executable": FFMPEG_EXE,
-    "ffprobe executable": FFPROBE_EXE,
     "scripts/info.py": INFO_SCRIPT,
     "scripts/formats.py": FORMATS_SCRIPT,
     "scripts/batch.py": BATCH_SCRIPT,
@@ -72,6 +73,13 @@ def main() -> int:
 
     print()
     required_checks = check_components(REQUIRED_COMPONENTS)
+    ffmpeg_checks = check_executables(
+        {
+            "ffmpeg availability": FFMPEG_EXE,
+            "ffprobe availability": FFPROBE_EXE,
+        },
+    )
+    required_checks.extend(ffmpeg_checks)
     if print_component_summary(required_checks):
         return 0
 
