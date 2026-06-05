@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import argparse
 import sys
-from pathlib import Path
 from typing import Any
 
+from mediaexplorer.paths import CONFIG_DIR, DOWNLOADS_DIR, FFMPEG_EXE
+from mediaexplorer.validation import component_exists, executable_available
 from mediaexplorer.ytdlp import (
     DownloadError,
     YoutubeDL,
@@ -14,16 +15,15 @@ from mediaexplorer.ytdlp import (
 )
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-CONFIG_PATH = PROJECT_ROOT / "config" / "yt-dlp.conf"
-DOWNLOADS_DIR = PROJECT_ROOT / "downloads"
-FFMPEG_BIN = PROJECT_ROOT / "tools" / "ffmpeg" / "bin"
-FFMPEG_EXE = FFMPEG_BIN / "ffmpeg.exe"
+CONFIG_PATH = CONFIG_DIR / "yt-dlp.conf"
 
 REQUIRED_COMPONENTS = {
     "config/yt-dlp.conf": CONFIG_PATH,
     "downloads folder": DOWNLOADS_DIR,
-    "tools/ffmpeg/bin/ffmpeg.exe": FFMPEG_EXE,
+}
+
+REQUIRED_EXECUTABLES = {
+    "ffmpeg availability": FFMPEG_EXE,
 }
 
 
@@ -39,8 +39,11 @@ def validate_required_components() -> bool:
     missing: list[str] = []
 
     for label, path in REQUIRED_COMPONENTS.items():
-        exists = path.is_file() if path.suffix else path.is_dir()
-        if not exists:
+        if not component_exists(path):
+            missing.append(f"{label}: {path}")
+
+    for label, path in REQUIRED_EXECUTABLES.items():
+        if not executable_available(path):
             missing.append(f"{label}: {path}")
 
     if not missing:

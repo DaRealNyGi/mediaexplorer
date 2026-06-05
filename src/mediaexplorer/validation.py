@@ -16,11 +16,25 @@ def component_exists(path: Path) -> bool:
     return path.exists()
 
 
+def executable_available(path: Path) -> bool:
+    return path.is_file()
+
+
 def check_components(components: Mapping[str, Path]) -> list[bool]:
     results: list[bool] = []
 
     for label, path in components.items():
         exists = component_exists(path)
+        results.append(status(label, exists, str(path), required=True))
+
+    return results
+
+
+def check_executables(components: Mapping[str, Path]) -> list[bool]:
+    results: list[bool] = []
+
+    for label, path in components.items():
+        exists = executable_available(path)
         results.append(status(label, exists, str(path), required=True))
 
     return results

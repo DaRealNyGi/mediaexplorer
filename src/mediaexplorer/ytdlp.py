@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from mediaexplorer.paths import DOWNLOADS_DIR, FFMPEG_BIN_DIR, FFMPEG_EXE
+from mediaexplorer.paths import BUNDLED_FFMPEG_EXE, DOWNLOADS_DIR, FFMPEG_BIN_DIR
 
 try:
     from yt_dlp import YoutubeDL
@@ -21,12 +21,18 @@ def missing_ytdlp_message() -> str:
     return "Error: yt-dlp is not installed. Run uv sync and try again."
 
 
+def bundled_ffmpeg_options() -> dict[str, Any]:
+    if BUNDLED_FFMPEG_EXE.exists():
+        return {"ffmpeg_location": str(FFMPEG_BIN_DIR)}
+    return {}
+
+
 def readonly_options() -> dict[str, Any]:
     return {
         "quiet": True,
         "no_warnings": True,
         "skip_download": True,
-        "ffmpeg_location": str(FFMPEG_BIN_DIR),
+        **bundled_ffmpeg_options(),
     }
 
 
@@ -46,7 +52,7 @@ def base_download_options(
 ) -> dict[str, Any]:
     return {
         "outtmpl": str(DOWNLOADS_DIR / "%(title)s.%(ext)s"),
-        "ffmpeg_location": str(FFMPEG_EXE),
+        **bundled_ffmpeg_options(),
         "progress_hooks": [progress_hook],
         "noplaylist": True,
         "continuedl": True,
