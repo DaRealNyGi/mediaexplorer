@@ -30,6 +30,11 @@ uv sync
 uv run python scripts/test.py
 ```
 
+## Quick Reference
+
+See:
+`docs/quick_reference.md`
+
 ## Metadata
 
 ```bash
