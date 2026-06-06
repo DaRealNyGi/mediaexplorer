@@ -1,5 +1,8 @@
 # MediaExplorer Stable Baseline (v0.2)
 
+This document records the historical v0.2 stable baseline. It should not be
+erased when later application states are added.
+
 ## Verified Features
 
 * [x] Health Check
@@ -51,8 +54,15 @@ Compilation alone is not sufficient validation.
 
 * Batch processing remains a subprocess orchestrator.
 * Some scripts still contain script-local validation logic.
-* No GUI layer currently exists.
+* At the time of the v0.2 baseline, no GUI layer existed.
 * No database layer currently exists.
+
+## Current Application State
+
+* Tkinter UI exists.
+* `main.py` launches the UI.
+* CLI remains supported.
+* Health check currently expects 11/11 required project components present.
 
 ## Future Development Rule
 

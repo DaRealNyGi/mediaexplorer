@@ -137,7 +137,7 @@ tools/
 
 CLI entry points still live in `scripts/`. `batch.py` remains a subprocess orchestrator for the existing CLI scripts.
 
-## Current Features
+## Current Application State
 
 - Metadata inspection
 - Format listing
@@ -147,9 +147,5 @@ CLI entry points still live in `scripts/`. `batch.py` remains a subprocess orche
 - Audio extraction
 - FFmpeg integration
 - Health checking
-
-## Current v0.2 Status
-
-- formats.py complete
-- batch.py complete
-- playlist.py complete
+- Tkinter UI launched by `uv run python main.py`
+- CLI workflows remain supported

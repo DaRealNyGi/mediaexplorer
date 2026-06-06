@@ -1,11 +1,14 @@
 # MediaExplorer UI Client
 
-Optional desktop wrapper for MediaExplorer. This folder is isolated from the core package and can be deleted without affecting the rest of the project.
+Optional desktop wrapper for MediaExplorer. The project launcher in `main.py`
+starts `ui_client.app`, so this folder is now part of the application launch
+path.
 
 ## What it is
 
 - A Tkinter sidecar that calls the existing CLI scripts as subprocesses.
-- It does **not** replace `scripts/` or import from `src/mediaexplorer`.
+- It is launched by `main.py` for the official v0.3 UI path.
+- It does **not** replace `scripts/`.
 - It does **not** change existing CLI behavior.
 - It inherits script behavior (including `config/yt-dlp.conf` applied by the Python helper layer) because each action runs the same scripts from the repository root.
 

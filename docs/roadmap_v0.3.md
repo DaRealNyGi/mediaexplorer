@@ -2,78 +2,55 @@
 
 ## Status
 
-Planning
+Tkinter UI stabilization implemented.
 
 ## Guiding Principle
 
-v0.3 should improve usability without breaking the verified v0.2 stable baseline.
+v0.3 improves usability without breaking the verified v0.2.1 stable behavior.
+The UI remains a subprocess wrapper around the existing CLI scripts and does
+not duplicate yt-dlp or FFmpeg logic.
 
-## Priority 1: Launcher Menu
+## Implemented In v0.3
 
-Goal:
-Create a simple command-line menu so users only need:
+### Tkinter UI Launch
 
+`main.py` launches the Tkinter UI:
+
+```bash
 uv run python main.py
+```
 
-Menu options:
+Direct sidecar launch remains available for development:
+
+```bash
+uv run python ui_client/app.py
+```
+
+### UI Actions
+
+Implemented UI actions:
 - Health Check
 - Metadata Lookup
 - Format Listing
 - Playlist Inspection
 - Video Download
 - Audio Extraction
-- Batch Processing
 
-Acceptance Criteria:
-- Existing scripts are reused.
-- No duplicated yt-dlp logic.
-- User can choose actions from a numbered menu.
-- Health check still passes 12/12.
+Health Check runs `scripts/test.py` and does not require a URL.
 
-## Priority 2: GUI Evaluation
+### Output Folder Display
 
-Goal:
-Evaluate PySide6 vs Tkinter.
+The UI shows the fixed project output folder:
 
-Preferred direction:
-PySide6, unless it adds too much setup friction.
+```text
+downloads/
+```
 
-Acceptance Criteria:
-- Short recommendation written before implementation.
-- No GUI code until framework is approved.
+Custom output folder support is not implemented in v0.3.
 
-## Priority 3: Metadata Export
+## Known v0.3 Limitations
 
-Goal:
-Export media metadata to JSON and CSV.
-
-Acceptance Criteria:
-- Works with single URL.
-- Later can support batch mode.
-- Does not download media.
-
-## Priority 4: Download History
-
-Goal:
-Track completed downloads.
-
-Possible storage:
-SQLite.
-
-Acceptance Criteria:
-- Records title, URL, output path, date, and mode.
-- Does not interfere with current download/audio scripts.
-
-## Priority 5: Channel Exploration
-
-Goal:
-Inspect creator/channel metadata.
-
-Acceptance Criteria:
-- Read-only first.
-- No bulk downloads by default.
-
-## Known v0.3 Limitation: YouTube Bot Checks
+### YouTube Bot Checks
 
 Some YouTube URLs, especially Shorts or bot-protected videos, may fail with:
 
@@ -84,21 +61,34 @@ Sign in to confirm you're not a bot.
 For v0.3, MediaExplorer should surface this error clearly but should not add
 cookies or authenticated extraction support.
 
-## Future Roadmap: v0.4+
+### UI Output Copying
 
-Optional cookies or authenticated extraction support may be considered for
-v0.4 or later.
+The output panel displays command stdout and stderr, but output copy behavior
+may need improvement in a later release.
 
-Requirements:
+## Deferred To v0.4+
+
+- Batch Processing UI
+- Cancel button
+- Streaming output
+- Custom output folder
+- Format picker
+- Metadata export
+- Download history
+- Channel exploration
+- Authenticated cookies support
+
+Authenticated cookies support requirements:
 - Must be opt-in.
 - Must not store cookies or browser session data in the repo.
 - Must not commit cookies, tokens, or auth files.
 
 ## Rules For v0.3
 
-- Preserve v0.2 stable baseline.
+- Preserve v0.2.1 stable behavior.
 - Run health check before and after changes.
+- Run pytest before considering changes complete.
 - Every feature requires syntax, happy-path, and failure-path validation.
 - Do not commit media files.
 - Do not commit tools/ffmpeg.
-- Do not work outside /home/nygi/projects/mediaexplorer.
+- Do not work outside `/home/nygi/projects/mediaexplorer`.

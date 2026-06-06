@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased - v0.3 Tkinter UI Stabilization
+
+### Added
+
+* Tkinter UI stabilization.
+* `main.py` launches the Tkinter UI.
+* Health Check action in the UI.
+
+### Changed
+
+* UI displays the fixed project `downloads/` folder.
+* UI documentation now uses `uv run python main.py` as the official launch
+  path.
+
+### Known Limitations
+
+* UI output copying may need improvement.
+
 ## v0.2.1 - Cross-Platform FFmpeg Compatibility Update
 
 ### Added

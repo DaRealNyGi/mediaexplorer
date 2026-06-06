@@ -2,31 +2,32 @@
 
 ## Current Status
 
-MediaExplorer v0.2 Stable
+MediaExplorer v0.3 Tkinter UI stabilization.
 
 GitHub Repository:
 https://github.com/DaRealNyGi/mediaexplorer
-
-Latest Stable Commit:
-5ba53a7
 
 Branch:
 main
 
 Health Check:
-12/12 required project components present
+11/11 required project components present
+
+Pytest:
+43 tests passing
 
 ---
 
 ## Verified Features
 
-* Health Check (`test.py`)
-* Metadata Lookup (`info.py`)
-* Format Listing (`formats.py`)
-* Playlist Inspection (`playlist.py`)
-* Video Download (`download.py`)
-* Audio Extraction (`audio.py`)
-* Batch Processing (`batch.py`)
+* Health Check (`scripts/test.py`)
+* Metadata Lookup (`scripts/info.py`)
+* Format Listing (`scripts/formats.py`)
+* Playlist Inspection (`scripts/playlist.py`)
+* Video Download (`scripts/download.py`)
+* Audio Extraction (`scripts/audio.py`)
+* Batch Processing (`scripts/batch.py`)
+* Tkinter UI launched by `uv run python main.py`
 
 ---
 
@@ -44,6 +45,9 @@ Purpose:
 * validation.py = health-check helpers
 * ytdlp.py = yt-dlp imports and shared option builders
 
+The Tkinter UI remains subprocess-based and calls the existing CLI scripts.
+It does not duplicate yt-dlp or FFmpeg logic.
+
 ---
 
 ## Verified Environment
@@ -56,9 +60,10 @@ Python Environment:
 
 uv
 
-Validation Command:
+Validation Commands:
 
 uv run python scripts/test.py
+uv run pytest -q
 
 Git Status:
 
@@ -77,6 +82,7 @@ Repository published to GitHub.
 pwd
 which python
 uv run python scripts/test.py
+uv run pytest -q
 
 3. Every feature requires:
 
@@ -88,63 +94,46 @@ uv run python scripts/test.py
 
 Compilation alone is not validation.
 
-4. Preserve stable baseline before merging changes.
+4. Preserve stable behavior before merging changes.
 
 ---
 
-## Suggested Next Milestone
+## Known UI Limitation
 
-MediaExplorer v0.3
-
-Candidates:
-
-### Option A (Recommended)
-
-GUI Frontend
-
-Evaluate:
-
-* PySide6
-* Tkinter
-
-Goal:
-
-Use existing scripts through a graphical interface.
-
-### Option B
-
-Metadata Export
-
-* JSON
-* CSV
-
-### Option C
-
-Channel Exploration
-
-* Channel metadata
-* Creator analysis
-
-### Option D
-
-Download History
-
-* SQLite
-* Download tracking
+The output panel displays command output, but output copy behavior may need
+improvement.
 
 ---
 
-## First Command Next Session
+## Deferred Work
+
+* Batch Processing UI
+* Cancel button
+* Streaming output
+* Custom output folder
+* Format picker
+* Metadata export
+* Download history
+* Channel exploration
+* Authenticated cookies support
+
+---
+
+## First Commands Next Session
 
 cd ~/projects/mediaexplorer
 git pull
 uv run python scripts/test.py
-git status
+uv run pytest -q
+uv run python main.py
 
 Expected:
 
 Health Check:
-12/12
+11/11
+
+Pytest:
+Passing
 
 Working Tree:
-Clean
+Clean unless intentionally carrying local work
