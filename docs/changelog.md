@@ -1,22 +1,48 @@
 # Changelog
 
-## Unreleased - v0.3 Tkinter UI Stabilization
+## v0.3.0 - Tkinter UI Stabilization Release
 
 ### Added
 
-* Tkinter UI stabilization.
-* `main.py` launches the Tkinter UI.
-* Health Check action in the UI.
+* Tkinter UI launcher
+* Health Check action in UI
+* Main application launch through:
+
+  ```bash
+  uv run python main.py
+  ```
 
 ### Changed
 
-* UI displays the fixed project `downloads/` folder.
-* UI documentation now uses `uv run python main.py` as the official launch
-  path.
+* UI officially supported
+* Documentation updated to reflect UI workflow
+* Session handoff and baseline documentation refreshed
+
+### Fixed
+
+* Misleading output-folder selection behavior
+* Stale documentation references to pre-UI architecture
+* Cross-platform FFmpeg support retained from v0.2.1
+
+### Validation
+
+* Health check PASS (11/11)
+* Pytest PASS (43 tests)
+* Manual UI smoke tests completed:
+
+  * Health Check
+  * Info
+  * Formats
+  * Playlist
+  * Download
+  * Audio
 
 ### Known Limitations
 
-* UI output copying may need improvement.
+* Some YouTube URLs may require authentication and return:
+  `"Sign in to confirm you're not a bot."`
+* Output panel copy behavior may require improvement.
+* Batch Processing UI remains deferred to v0.4.
 
 ## v0.2.1 - Cross-Platform FFmpeg Compatibility Update
 
