@@ -8,12 +8,13 @@ import sys
 import threading
 import tkinter as tk
 from pathlib import Path
-from tkinter import filedialog, messagebox, scrolledtext, ttk
+from tkinter import messagebox, scrolledtext, ttk
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DOWNLOADS_DIR = REPO_ROOT / "downloads"
 
 SCRIPTS = {
+    "health": REPO_ROOT / "scripts" / "test.py",
     "info": REPO_ROOT / "scripts" / "info.py",
     "formats": REPO_ROOT / "scripts" / "formats.py",
     "playlist": REPO_ROOT / "scripts" / "playlist.py",
@@ -22,6 +23,7 @@ SCRIPTS = {
 }
 
 BUTTON_LABELS = {
+    "health": "Health Check",
     "info": "Get Info",
     "formats": "List Formats",
     "playlist": "Inspect Playlist",
@@ -30,18 +32,34 @@ BUTTON_LABELS = {
 }
 
 UI_QUEUE_POLL_MS = 100
+URL_OPTIONAL_SCRIPTS = {"health"}
+
+
+def script_requires_url(script_key: str) -> bool:
+    return script_key not in URL_OPTIONAL_SCRIPTS
 
 
 def build_script_command(
     script_key: str,
-    url: str,
+    url: str | None = None,
     *,
     quicktime_compatible: bool = False,
 ) -> list[str]:
-    command = [sys.executable, str(SCRIPTS[script_key]), url]
+    command = [sys.executable, str(SCRIPTS[script_key])]
+    if script_requires_url(script_key):
+        if url is None:
+            raise ValueError(f"{script_key} requires a URL")
+        command.append(url)
     if script_key == "download" and quicktime_compatible:
         command.append("--compatible")
     return command
+
+
+def display_command(script_key: str, url: str | None) -> str:
+    parts = [SCRIPTS[script_key].name]
+    if script_requires_url(script_key) and url:
+        parts.append(url)
+    return " ".join(parts)
 
 
 def subprocess_popen_kwargs(*, cwd: Path) -> dict:
@@ -86,25 +104,17 @@ class MediaExplorerApp:
         self.url_var = tk.StringVar()
         ttk.Entry(url_frame, textvariable=self.url_var).pack(fill=tk.X)
 
-        folder_frame = ttk.LabelFrame(main, text="Download Folder", padding=8)
+        folder_frame = ttk.LabelFrame(main, text="Output Folder", padding=8)
         folder_frame.pack(fill=tk.X, pady=(0, 8))
 
-        folder_row = ttk.Frame(folder_frame)
-        folder_row.pack(fill=tk.X)
-
-        self.folder_var = tk.StringVar(value=str(DEFAULT_DOWNLOADS_DIR))
-        ttk.Entry(folder_row, textvariable=self.folder_var).pack(
-            side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 8)
+        self.folder_var = tk.StringVar(
+            value=f"Downloads save to: {DEFAULT_DOWNLOADS_DIR}"
         )
-        ttk.Button(folder_row, text="Browse…", command=self._browse_folder).pack(
-            side=tk.LEFT
-        )
-
         ttk.Label(
             folder_frame,
-            text="Note: scripts currently save to the project downloads/ folder.",
+            textvariable=self.folder_var,
             wraplength=600,
-        ).pack(anchor=tk.W, pady=(6, 0))
+        ).pack(anchor=tk.W)
 
         options_frame = ttk.LabelFrame(main, text="Download Options", padding=8)
         options_frame.pack(fill=tk.X, pady=(0, 8))
@@ -172,14 +182,6 @@ class MediaExplorerApp:
         elif kind == "release":
             self._release_button()
 
-    def _browse_folder(self) -> None:
-        selected = filedialog.askdirectory(
-            initialdir=self.folder_var.get() or str(DEFAULT_DOWNLOADS_DIR),
-            title="Select download folder",
-        )
-        if selected:
-            self.folder_var.set(selected)
-
     def _clear_output(self) -> None:
         self.output.configure(state=tk.NORMAL)
         self.output.delete("1.0", tk.END)
@@ -207,9 +209,11 @@ class MediaExplorerApp:
         if self._running:
             return
 
-        url = self._validate_url()
-        if url is None:
-            return
+        url: str | None = None
+        if script_requires_url(script_key):
+            url = self._validate_url()
+            if url is None:
+                return
 
         script_path = SCRIPTS[script_key]
         if not script_path.is_file():
@@ -227,7 +231,9 @@ class MediaExplorerApp:
 
         label = BUTTON_LABELS[script_key]
         self._set_status(f"Running {label}…")
-        self._append_output(f"\n{'=' * 60}\n$ {script_path.name} {url}\n{'=' * 60}\n")
+        self._append_output(
+            f"\n{'=' * 60}\n$ {display_command(script_key, url)}\n{'=' * 60}\n"
+        )
 
         quicktime_compatible = (
             script_key == "download" and self.quicktime_compatible_var.get()
@@ -243,7 +249,7 @@ class MediaExplorerApp:
     def _execute_script(
         self,
         script_key: str,
-        url: str,
+        url: str | None,
         label: str,
         quicktime_compatible: bool = False,
     ) -> None:

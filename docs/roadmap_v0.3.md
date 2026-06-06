@@ -73,6 +73,27 @@ Acceptance Criteria:
 - Read-only first.
 - No bulk downloads by default.
 
+## Known v0.3 Limitation: YouTube Bot Checks
+
+Some YouTube URLs, especially Shorts or bot-protected videos, may fail with:
+
+```text
+Sign in to confirm you're not a bot.
+```
+
+For v0.3, MediaExplorer should surface this error clearly but should not add
+cookies or authenticated extraction support.
+
+## Future Roadmap: v0.4+
+
+Optional cookies or authenticated extraction support may be considered for
+v0.4 or later.
+
+Requirements:
+- Must be opt-in.
+- Must not store cookies or browser session data in the repo.
+- Must not commit cookies, tokens, or auth files.
+
 ## Rules For v0.3
 
 - Preserve v0.2 stable baseline.

@@ -30,6 +30,33 @@ uv sync
 uv run python scripts/test.py
 ```
 
+## Desktop UI
+
+MediaExplorer v0.3 includes a small Tkinter UI that launches the existing CLI
+scripts as subprocesses. It does not duplicate yt-dlp or FFmpeg logic.
+
+```bash
+uv run python main.py
+```
+
+The UI includes Health Check, metadata lookup, format listing, playlist
+inspection, video download, and audio extraction. Downloads and extracted audio
+save to the project `downloads/` folder.
+
+Batch Processing remains available through the CLI and is deferred in the UI
+until v0.4.
+
+## Known Limitations
+
+Some YouTube URLs, especially Shorts or bot-protected videos, may fail with:
+
+```text
+Sign in to confirm you're not a bot.
+```
+
+For v0.3, MediaExplorer should surface this error clearly but does not add
+cookies or authenticated extraction support.
+
 ## Quick Reference
 
 See:

@@ -11,9 +11,38 @@ from app import (  # noqa: E402
     REPO_ROOT as APP_REPO_ROOT,
     SCRIPTS,
     build_script_command,
+    display_command,
     run_script_subprocess,
+    script_requires_url,
     subprocess_popen_kwargs,
 )
+
+
+def test_build_script_command_health_check_without_url() -> None:
+    command = build_script_command("health")
+
+    assert command == [sys.executable, str(SCRIPTS["health"])]
+
+
+def test_health_check_does_not_require_url() -> None:
+    assert script_requires_url("health") is False
+
+
+def test_download_requires_url() -> None:
+    assert script_requires_url("download") is True
+
+
+def test_build_script_command_requires_url_for_media_actions() -> None:
+    try:
+        build_script_command("download")
+    except ValueError as exc:
+        assert str(exc) == "download requires a URL"
+    else:
+        raise AssertionError("download command should require a URL")
+
+
+def test_display_command_omits_url_for_health_check() -> None:
+    assert display_command("health", None) == "test.py"
 
 
 def test_build_script_command_download_without_compatible() -> None:
